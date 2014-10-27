@@ -1,0 +1,403 @@
+FORMAT: 1A
+AUTHOR: Nima Karvar
+
+# Allegion API
+Allegion API is an interface used to send data between the building, users, and devices using StratIS web services.
+
+### API Version: v0.1
+### Document Version: v0.1 
+
+# Group StratIS Sphere
+Units related resources of the **Allegion API**
+
+## Building Layout Collection [/building_layout]
+List hierarchy for a site. Always gets entire site dictionary.
+### List All Site [POST]
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password"
+        }
+        
++ Response 200 (application/json)
+
+        {
+            "building_layout": {
+                "name": "site0001",
+                "type":"site",
+                "description":"My Site",
+                "id":1,
+                "children": [{
+                    "name":"floor1001",
+                    "type":"floor",
+                    "description":"Floor",
+                    "id":2,
+                    "children":[{
+                        "name":"suite2001",
+                        "type":"unitgroup",
+                        "description":"My Suite",
+                        "id":3,
+                        "children":[{
+                            "name":"device3001",
+                            "type":"device",
+                            "description":"Lock",
+                            "device_type":"CL-200",
+                            "id":4,
+                            "children":[
+                                "1234",
+                                "4321"
+                            ]
+                        }]
+                    }]
+                }]
+            }
+        }
+        
++ Response 403 (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "error":"Incorrect Credentials"
+        }
+
+## Building Users Collection - List [/building_users/list]
+Create, Read, Update, Delete Building Users
+### List all users for a site [POST]
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "user_type":"all" 
+        }
+
++ Response 200 (application/json)
+
+        {
+            "building_users":{
+                "residents": [{
+                    "firstName":"",
+                    "lastName":"",
+                    "phone":"",
+                    "email":"",
+                    "notes":"",
+                    "credentials":[{
+                    }]
+                }],
+                "staff": [{
+                    "firstName":"",
+                    "lastName":"",
+                    "phone":"",
+                    "email":"",
+                    "title":"",
+                    "notes":"",
+                    "credentials":[{
+                    }]
+                }],
+                "vendors": [{
+                    "firstName":"",
+                    "lastName":"",
+                    "phone":"",
+                    "email":"",
+                    "company":"",
+                    "credentials":[{
+                    }]
+                }]
+            }
+        }
+
++ Response 403 (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "error":"Incorrect Credentials"
+        }
+
+## Building Users Collection - Create [/building_users/create]
+### Create User [POST]
+user_type is `resident `, `vendor`, or `staff`
++ Request (application/json)
+
+        {
+            "username":"",
+            "password":"",
+            "user_type":"",
+            "first_name":"",
+            "last_name":"",
+            "phone":"",
+            "email":"",
+            "notes":"",
+            "title":"",
+            "company":""
+        }
+
++ Response 201 (application/json)
+
+        {
+            "id":1,
+            "first_name":"",
+            "last_name":"",
+            "phone":"",
+            "email":"",
+            "notes":"",
+            "title":"",
+            "company":"",
+            "credentials": [{
+            }]
+        }
+
+## Building Users Collection - Edit [/building_users/edit]
+### Edit User [POST]
+* What does the API use to `GET` the user?
+* Credentials are tied to ID  
+
+Assumed process:  
+1. Choose user at front end and gets all data  
+2. Gets ID  
+3. Updates user based since the by keeping same ID and changing other attributes
+* NOTE: ID is not entered by user
++ Request (application/json)
+
+        {
+            "id":1,
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "user_type":"resident|vendor|staff",
+            "firstName":"",
+            "lastName":"",
+            "phone":"",
+            "email":"",
+            "notes":"",
+            "title":"",
+            "company":""
+        }
+
++ Response 200 (application/json)
+
+        {
+            "id":1,
+            "first_name":"",
+            "lastName":"",
+            "phone":"",
+            "email":"",
+            "notes":"",
+            "title":"",
+            "company:"",
+            "credentials: [{
+            }]
+        }
+        
+## Building Users Collection - Remove [/building_users/remove]
+### Remove User [POST]
+- Does it only need ID? 
+- Getting user data from ID done in middle-ware. 
+- Anything in the response? 
+- Leaving ID in response to get user data as blank
+
++ Request (application/json)
+
+        {
+            "id":1
+        }
+
++ Response 200 (application/json)
+
+        {
+            "id":1
+        }
+
+## Device Information Collection - List All Devices [/device_info/list_all]
+Lists devices for a site
+### List all devices for a site [POST]
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "device_name":"",
+            "device_type":"lock"|"key"
+        }
+        
+## Device Information Collection - Get by Type [/device_info/get_by_type]
+### Gets devices by type [POST]
+* Leave as parameter or add to request?
+* Since other device actions are done without needing to specify type, not using
+
+<!-- +Parameters
+    + device_type (required, string, `lock|key`) ... Chooses between lock devices or key devices -->
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "device_type":"lock|key"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "device_name":"",
+            "device_type":"lock"|"key"
+        }
+        
+## Device Information Collection - Create Key [/device_info/create_key]
+### Create Key [POST]
++ Request (application/json)
+        
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "key_type":"",
+            "key_code":"",
+            "swipe_code":""
+        }
+
++ Response 201 (application/json)
+        
+        {
+            "key_id":1,
+            "key_type":"",
+            "key_model":"",
+            "access_table":""
+        }
+
+## Device Information Collection - Assign Key to Lock [/device_info/assign_key_to_lock]
+### Assign Key to Lock [POST]
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "key_id":"",
+            "lock_id":"",
+            "role":""
+        }
+
++ Response 201 (application/json)
+
+        {
+            "":""
+        }
+
+## Device Information Collection - Assign Key to Unit [/device_info/assign_key_to_unit]
+### Assign Key to Unit [POST]
+Differs from `Assign Key to Lock` by setting entire living unit for all doors
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "key_id":"",
+            "unit_id":"",
+            "role":""
+        }
+
++ Response 201 (application/json)
+
+        {
+            "":""
+        }
+
+## Door File Collection [/door_file]
+Returns JSON file for door specified by id containing the most accurate access table and user information available from the StratIS server.
+### Get one generated door file [POST]
+
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "door_id":"",
+            "door_type":"residents|vendors|staff"
+        }
+
++ Response 200 (text/plain)
+        
+        {
+            "door_id":1,
+            "door_type":"",
+            "door_model":"",
+            "access_table":"tbd"
+        }
+
+
+## iButton File Collection [/ibutton_file]
+Returns JSON file for door specified by id containing the most accurate access table and user information available from the StratIS server.
+### Get one generated door file [POST]
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "key_id":1
+        }
+
++ Response 200 (text/plain)
+        
+        {
+            "key_id":1,
+            "key_type":"resp|inh|vend",
+            "key_type_description":"Residential Plus | Inhibit | Vendor"
+            "key_model":"",
+            "access_table":"tbd"
+        }
+
+
+## To-Do Collection [/todo/get_all]
+Gets a list of to-do items for staff
+
+### Get all to-do items [POST]
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "status":""
+        }
+
++ Response 200 (application/json)
+
+        { 
+            "":""
+        }
+
+## To-Do Collection [/todo/get_by_date]
+### Get to-do items by date [POST]
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password"
+            "start_date":"",
+            "end_date":""
+        }
+        
++ Response 200 (application/json)
+
+        {
+            "":""
+        }
+
+## To-Do Collection [/todo/get_by_status]
+### Gets to-do items by status [POST]
++ Request (application/json)
+
+        {
+            "username":"stratis_sphere_user_name",
+            "password":"stratis_sphere_password",
+            "status":""
+        }
+
++ Response 200 (application/json)
+
+        {
+            "":""
+        }
